@@ -1,0 +1,26 @@
+- hosts: localhost
+  connection: local
+
+  tasks:
+
+    - name: Clone the repository
+      git:
+        repo: 'https://github.com/MithileshSP/FOSS-EXP4-GraphQL.git'
+        dest: "{{ playbook_dir }}/task-manager-api"
+        version: main
+
+    - name: Install project dependencies
+      npm:
+        path: "{{ playbook_dir }}/task-manager-api"
+        state: present
+
+    - name: Install PM2 globally
+      command: npm install -g pm2
+
+    - name: Start the application with PM2
+      command: pm2 start server.js --name task-manager
+      args:
+        chdir: "{{ playbook_dir }}/task-manager-api"
+
+    - name: Save PM2 process list
+      command: pm2 save
